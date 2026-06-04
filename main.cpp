@@ -313,31 +313,6 @@ int binarySearch(const std::vector<Warga>& data, const std::string& target) {
     return -1;
 }
 
-// Benchmark untuk laporan skripsi
-void runBenchmark(const std::vector<Warga>& originalData) {
-    if (originalData.empty()) {
-        std::cout << "\nData kosong, benchmark dilewati.\n";
-        return;
-    }
-    // Buat copy non-const agar insertionSort bisa memodifikasinya
-    auto dataCopy = originalData; 
-    
-    std::cout << "\n=== BENCHMARK ALGORITMA ===\n";
-    auto t0 = std::chrono::high_resolution_clock::now();
-    insertionSort(dataCopy);
-    auto t1 = std::chrono::high_resolution_clock::now();
-    auto durSort = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-
-    std::string testNik = dataCopy[dataCopy.size() / 2].nik;
-    t0 = std::chrono::high_resolution_clock::now();
-    binarySearch(dataCopy, testNik);
-    t1 = std::chrono::high_resolution_clock::now();
-    auto durSearch = std::chrono::duration_cast<std::chrono::microseconds>(t1 - t0).count();
-
-    std::cout << "Insertion Sort: " << durSort << " us | n = " << originalData.size() << "\n";
-    std::cout << "Binary Search : " << durSearch << " us | target = " << testNik << "\n";
-    std::cout << "Benchmark selesai.\n\n";
-}
 
 // ==========================================
 // 3. DATABASE CRUD (libpqxx)
@@ -1146,5 +1121,3 @@ int main() {
     return 0;
 }
 
-//editnya masih cuman nama
-//emoji ga kerender
