@@ -36,7 +36,7 @@ std::string inputString(const std::string& prompt, bool allowEmpty = false) {
         std::getline(std::cin, input);
         input = trim(input);
         if (!input.empty() || allowEmpty) return input;
-        std::cout << "⚠️ Input tidak boleh kosong. Silakan ulangi.\n";
+        std::cout << "[!] Input tidak boleh kosong. Silakan ulangi.\n";
     }
 }
 
@@ -51,7 +51,7 @@ std::string inputNIK(const std::string& prompt) {
         std::getline(std::cin, input);
         input = trim(input);
         if (std::regex_match(input, nikRegex)) return input;
-        std::cout << "⚠️ Harus tepat 16 digit angka (contoh: 3201012345670001)\n";
+        std::cout << "[!] Harus tepat 16 digit angka (contoh: 3201012345670001)\n";
     }
 }
 
@@ -83,7 +83,7 @@ std::string inputDate(const std::string& prompt, bool allowEmpty = false) {
         input = trim(input);
         if (input.empty() && allowEmpty) return "";
         if (isValidDate(input)) return input;
-        std::cout << "⚠️ Format tanggal tidak valid. Gunakan YYYY-MM-DD (contoh: 2009-08-15)\n";
+        std::cout << "[!] Format tanggal tidak valid. Gunakan YYYY-MM-DD (contoh: 2009-08-15)\n";
     }
 }
 
@@ -101,7 +101,7 @@ int inputInt(const std::string& prompt, int min = 0, int max = 999999) {
             int val = std::stoi(input, &pos);
             if (pos == input.length() && val >= min && val <= max) return val;
         } catch (...) {}
-        std::cout << "⚠️ Masukkan bilangan bulat antara " << min << " - " << max << "\n";
+        std::cout << "[!] Masukkan bilangan bulat antara " << min << " - " << max << "\n";
     }
 }
 
@@ -116,7 +116,7 @@ double inputDouble(const std::string& prompt, double min = 0.0, double max = 999
             double val = std::stod(input, &pos);
             if (pos == input.length() && val >= min && val <= max) return val;
         } catch (...) {}
-        std::cout << "⚠️ Masukkan angka valid antara " << min << " - " << max << "\n";
+        std::cout << "[!] Masukkan angka valid antara " << min << " - " << max << "\n";
     }
 }
 
@@ -130,7 +130,7 @@ char inputYN(const std::string& prompt) {
         std::getline(std::cin, input);
         input = trim(toUpper(input));
         if (input == "Y" || input == "N") return input[0];
-        std::cout << "⚠️ Hanya Y (Ya) atau N (Tidak) yang diperbolehkan.\n";
+        std::cout << "[!] Hanya Y (Ya) atau N (Tidak) yang diperbolehkan.\n";
     }
 }
 
@@ -141,7 +141,7 @@ char inputGender(const std::string& prompt) {
         std::getline(std::cin, input);
         input = trim(toUpper(input));
         if (input == "L" || input == "P") return input[0];
-        std::cout << "⚠️ Hanya L (Laki-laki) atau P (Perempuan) yang diperbolehkan.\n";
+        std::cout << "[!] Hanya L (Laki-laki) atau P (Perempuan) yang diperbolehkan.\n";
     }
 }
 
@@ -160,7 +160,7 @@ std::string inputStatus(const std::string& prompt) {
         input = trim(input);
         std::transform(input.begin(), input.end(), input.begin(), ::tolower);
         if (input == "normal" || input == "beresiko") return input;
-        std::cout << "⚠️ Hanya 'normal' atau 'beresiko' yang diperbolehkan.\n";
+        std::cout << "[!] Hanya 'normal' atau 'beresiko' yang diperbolehkan.\n";
     }
 }
 
@@ -176,7 +176,7 @@ std::string inputImunisasi(const std::string& prompt, int maxDosis = 3) {
             int dosis = std::stoi(input);
             if (dosis >= 1 && dosis <= maxDosis) return std::to_string(dosis);
         } catch (...) {}
-        std::cout << "⚠️ Masukkan 1-" << maxDosis << " atau - untuk tidak.\n";
+        std::cout << "[!] Masukkan 1-" << maxDosis << " atau - untuk tidak.\n";
     }
 }
 
@@ -198,7 +198,7 @@ std::string inputChoice(const std::string& prompt, const std::vector<std::string
             std::transform(optLower.begin(), optLower.end(), optLower.begin(), ::tolower);
             if (input == optLower) return input;
         }
-        std::cout << "⚠️ Pilihan tidak valid.\n";
+        std::cout << "[!] Pilihan tidak valid.\n";
     }
 }
 
@@ -211,20 +211,20 @@ std::string inputRTRW(const std::string& prompt, const std::string& fieldName) {
         
         // Cek panjang 1-3 karakter
         if (input.empty() || input.length() > 3) {
-            std::cout << "⚠️ " << fieldName << " harus 1-3 digit (ditemukan " << input.length() << " karakter).\n";
+            std::cout << "[!] " << fieldName << " harus 1-3 digit (ditemukan " << input.length() << " karakter).\n";
             continue;
         }
         
         // Cek semua karakter adalah angka
         bool allDigits = std::all_of(input.begin(), input.end(), ::isdigit);
         if (!allDigits) {
-            std::cout << "⚠️ " << fieldName << " hanya boleh berisi angka (0-9).\n";
+            std::cout << "[!] " << fieldName << " hanya boleh berisi angka (0-9).\n";
             continue;
         }
         
         // Cek tidak dimulai dengan 00 (kecuali "0" tunggal)
         if (input.length() > 1 && input[0] == '0' && input[1] == '0') {
-            std::cout << "⚠️ " << fieldName << " tidak boleh dimulai dengan '00'.\n";
+            std::cout << "[!] " << fieldName << " tidak boleh dimulai dengan '00'.\n";
             continue;
         }
         
@@ -712,7 +712,7 @@ void saveOrUpdate(pqxx::connection& conn, const Warga& w) {
         }
     );
     txn.commit();
-    std::cout << "✅ Data tersimpan ke PostgreSQL.\n";
+    std::cout << "[OK] Data tersimpan ke PostgreSQL.\n";
 }
 
 void deleteByNIK(pqxx::connection& conn, const std::string& nik) {
@@ -826,9 +826,9 @@ int main() {
                 insertionSort(data);
                 try {
                     saveOrUpdate(conn, w);
-                    std::cout << "\n🎉 Data berhasil disimpan & diurutkan (Insertion Sort)!\n";
+                    std::cout << "\nData berhasil disimpan & diurutkan (Insertion Sort)!\n";
                 } catch (const pqxx::sql_error& e) {
-                    std::cerr << "\n🔴 Database Error: " << e.what() << "\n";
+                    std::cerr << "\n[!] Database Error: " << e.what() << "\n";
                     data.pop_back(); // Rollback dari memory
                 }
             } else if (choice == 3) {
