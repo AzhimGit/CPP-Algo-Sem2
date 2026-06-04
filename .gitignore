@@ -1,0 +1,18 @@
+# Build folders
+build/
+cmake-build-*/
+
+# Executables
+*.exe
+*.out
+*.app
+
+# IDE files
+.vscode/
+.vs/
+*.sln
+*.vcxproj.user
+
+# OS files
+.DS_Store
+Thumbs.db
