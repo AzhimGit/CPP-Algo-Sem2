@@ -1011,9 +1011,8 @@ int main() {
                       << "2. Tambah Data Baru\n"
                       << "3. Edit Data\n"
                       << "4. Hapus Data\n"
-                      << "5. Benchmark Algoritma\n"
-                      << "6. Tampilkan Semua Data\n"
-                      << "7. Keluar\n"
+                      << "5. Tampilkan Semua Data\n"
+                      << "6. Keluar\n"
                       << "Pilih: ";
             int choice; std::cin >> choice;
             if (std::cin.fail()) { std::cin.clear(); std::cin.ignore(10000, '\n'); continue; }
@@ -1105,10 +1104,8 @@ int main() {
                     deleteByNIK(conn, nik);
                 } else std::cout << "Tidak ditemukan.\n";
             } else if (choice == 5) {
-                runBenchmark(data);
-            } else if (choice == 6) {
                 for (const auto& w : data) printWarga(w);
-            } else if (choice == 7) {
+            } else if (choice == 6) {
                 std::cout << "Program ditutup.\n";
                 break;
             }
