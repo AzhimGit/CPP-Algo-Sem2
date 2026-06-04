@@ -1,9 +1,7 @@
-# Build folder
 build/
 out/
 cmake-build-*/
 
-# Compiled Object files and Executables
 *.exe
 *.obj
 *.o
@@ -12,13 +10,11 @@ cmake-build-*/
 *.so
 *.dylib
 
-# CMake generated files
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# Visual Studio / VS Code
 .vs/
 .vscode/
 *.suo
