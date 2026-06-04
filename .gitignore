@@ -1,7 +1,0 @@
-cmake-build-debug/
-cmake-build-release/
-*.exe
-*.o
-*.obj
-.vscode/
-.idea/
