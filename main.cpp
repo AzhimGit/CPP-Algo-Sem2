@@ -1118,3 +1118,4 @@ int main() {
     return 0;
 }
 
+//gimana kalo ada 2 nik sama waktu dicari?
