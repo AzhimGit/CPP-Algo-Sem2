@@ -2,7 +2,7 @@
 
 Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementasikan algoritma **Insertion Sort** dan **Binary Search** secara manual untuk tujuan akademik.
 
-## 🛠️ Prasyarat (Wajib Diinstall Temanmu)
+## 🛠️ Prasyarat 
 1. **CMake** (v3.16+)
 2. **Compiler C++** (Visual Studio Build Tools 2022 dengan workload C++ Desktop, atau MinGW)
 3. **PostgreSQL** (v14+)
