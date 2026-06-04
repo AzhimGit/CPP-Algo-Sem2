@@ -724,6 +724,180 @@ void deleteByNIK(pqxx::connection& conn, const std::string& nik) {
 }
 
 // ==========================================
+// 5. FUNGSI EDIT DATA (SUB-MENU DINAMIS)
+// ==========================================
+
+// Sub-menu 1: Edit Data Umum
+void editDataUmum(Warga& w) {
+    while (true) {
+        std::cout << "\n--- EDIT DATA UMUM ---\n";
+        std::cout << "1. Nama Lengkap (Saat ini: " << w.nama_lengkap << ")\n";
+        std::cout << "2. Tanggal Lahir (Saat ini: " << w.tgl_lahir << ")\n";
+        std::cout << "3. No HP (Saat ini: " << w.no_hp.value_or("-") << ")\n";
+        std::cout << "4. Desa/Kelurahan (Saat ini: " << w.desa.value_or("-") << ")\n";
+        std::cout << "5. RT (Saat ini: " << w.rt.value_or("-") << ")\n";
+        std::cout << "6. RW (Saat ini: " << w.rw.value_or("-") << ")\n";
+        std::cout << "7. Kembali\n";
+        std::cout << "Pilih: ";
+        
+        int choice; std::cin >> choice;
+        if (std::cin.fail()) { std::cin.clear(); std::cin.ignore(10000, '\n'); continue; }
+
+        if (choice == 1) { std::cin.ignore(); w.nama_lengkap = inputString("Nama Baru: "); }
+        else if (choice == 2) w.tgl_lahir = inputDate("Tgl Lahir Baru (YYYY-MM-DD): ");
+        else if (choice == 3) { std::cin.ignore(); w.no_hp = inputString("No HP Baru: ", true); }
+        else if (choice == 4) { std::cin.ignore(); w.desa = inputString("Desa Baru: "); }
+        else if (choice == 5) { std::cin.ignore(); w.rt = inputRTRW("RT Baru: ", "RT"); }
+        else if (choice == 6) { std::cin.ignore(); w.rw = inputRTRW("RW Baru: ", "RW"); }
+        else if (choice == 7) break;
+        else std::cout << "[!] Pilihan tidak valid.\n";
+    }
+}
+
+// Sub-menu 2: Edit Pemeriksaan Fisik (Bergantung Kategori)
+void editDataFisik(Warga& w) {
+    while (true) {
+        std::cout << "\n--- EDIT PEMERIKSAAN FISIK ---\n";
+        if (w.kategori == 1) { // Bayi
+            std::cout << "1. Berat Badan (Saat ini: " << w.bb.value_or("-") << " kg)\n";
+            std::cout << "2. Tinggi Badan (Saat ini: " << w.tb.value_or("-") << " cm)\n";
+            std::cout << "3. Lingkar Lengan Atas (Saat ini: " << w.lla.value_or("-") << " cm)\n";
+            std::cout << "4. Lingkar Kepala (Saat ini: " << w.lingkar_kepala.value_or("-") << " cm)\n";
+            std::cout << "5. Kembali\n";
+            int c; std::cin >> c;
+            if (c == 1) w.bb = std::to_string(inputDouble("BB Baru (1-30): ", 1.0, 30.0));
+            else if (c == 2) w.tb = std::to_string(inputDouble("TB Baru (30-100): ", 30.0, 100.0));
+            else if (c == 3) w.lla = std::to_string(inputDouble("LLA Baru (5-25): ", 5.0, 25.0));
+            else if (c == 4) w.lingkar_kepala = std::to_string(inputDouble("Lingkar Kepala Baru (25-55): ", 25.0, 55.0));
+            else if (c == 5) break;
+        } 
+        else if (w.kategori == 2) { // Ibu Hamil
+            std::cout << "1. BB Sekarang (Saat ini: " << w.bb_sekarang.value_or("-") << " kg)\n";
+            std::cout << "2. Lingkar Lengan Atas (Saat ini: " << w.lla_ibu.value_or("-") << " cm)\n";
+            std::cout << "3. Kembali\n";
+            int c; std::cin >> c;
+            if (c == 1) w.bb_sekarang = std::to_string(inputDouble("BB Sekarang (30-150): ", 30.0, 150.0));
+            else if (c == 2) w.lla_ibu = std::to_string(inputDouble("LLA Ibu (15-40): ", 15.0, 40.0));
+            else if (c == 3) break;
+        } 
+        else if (w.kategori == 3) { // Ibu Menyusui
+            std::cout << "1. Berat Badan (Saat ini: " << w.bb_menyusui.value_or("-") << " kg)\n";
+            std::cout << "2. Tekanan Darah (Saat ini: " << w.tekanan_darah_m.value_or("-") << ")\n";
+            std::cout << "3. Kondisi Payudara (Saat ini: " << w.kondisi_payudara.value_or("-") << ")\n";
+            std::cout << "4. Kembali\n";
+            int c; std::cin >> c;
+            if (c == 1) w.bb_menyusui = std::to_string(inputDouble("BB (30-150): ", 30.0, 150.0));
+            else if (c == 2) { std::cin.ignore(); w.tekanan_darah_m = inputString("Tekanan Darah Baru (cth: 120/80): "); }
+            else if (c == 3) { std::cin.ignore(); w.kondisi_payudara = inputString("Kondisi Payudara Baru: "); }
+            else if (c == 4) break;
+        } 
+        else if (w.kategori == 4) { // Lansia
+            std::cout << "1. Tekanan Darah (Saat ini: " << w.tekanan_darah_l.value_or("-") << ")\n";
+            std::cout << "2. Gula Darah (Saat ini: " << w.gula_darah.value_or("-") << " mg/dL)\n";
+            std::cout << "3. Kolesterol (Saat ini: " << w.kolesterol.value_or("-") << " mg/dL)\n";
+            std::cout << "4. Kembali\n";
+            int c; std::cin >> c;
+            if (c == 1) { std::cin.ignore(); w.tekanan_darah_l = inputString("Tekanan Darah Baru (cth: 120/80): "); }
+            else if (c == 2) w.gula_darah = std::to_string(inputDouble("Gula Darah Baru (50-500): ", 50.0, 500.0));
+            else if (c == 3) w.kolesterol = std::to_string(inputDouble("Kolesterol Baru (100-400): ", 100.0, 400.0));
+            else if (c == 4) break;
+        }
+    }
+}
+
+// Sub-menu 3: Edit Status Kesehatan & Catatan
+void editDataMedis(Warga& w) {
+    while (true) {
+        std::cout << "\n--- EDIT STATUS & CATATAN MEDIS ---\n";
+        std::cout << "1. Status Kesehatan (Normal/Beresiko)\n";
+        std::cout << "2. Keterangan Rujukan\n";
+        std::cout << "3. Catatan Posyandu\n";
+        std::cout << "4. Kembali\n";
+        std::cout << "Pilih: ";
+        
+        int choice; std::cin >> choice;
+        if (std::cin.fail()) { std::cin.clear(); std::cin.ignore(10000, '\n'); continue; }
+
+        if (choice == 1) {
+            std::cin.ignore();
+            std::string newStatus = inputStatus("Status Baru");
+            if (w.kategori == 1) w.status_bayi = newStatus;
+            else if (w.kategori == 2) w.status_hamil = newStatus;
+            else if (w.kategori == 3) w.status_menyusui = newStatus;
+            else if (w.kategori == 4) w.status_lansia = newStatus;
+        } 
+        else if (choice == 2) {
+            std::cin.ignore();
+            std::string newRujukan = inputString("Rujukan Baru (atau 'tidak'): ");
+            if (w.kategori == 1) w.rujukan_bayi = newRujukan;
+            else if (w.kategori == 2) w.rujukan_hamil = newRujukan;
+            else if (w.kategori == 3) w.rujukan_menyusui = newRujukan;
+            else if (w.kategori == 4) w.rujukan_lansia = newRujukan;
+        } 
+        else if (choice == 3) {
+            std::cin.ignore();
+            std::string newCatatan = inputString("Catatan Baru: ", true);
+            if (w.kategori == 1) w.catatan = newCatatan;
+            else if (w.kategori == 2) w.catatan_hamil = newCatatan;
+            else if (w.kategori == 3) w.catatan_menyusui = newCatatan;
+            else if (w.kategori == 4) w.catatan_lansia = newCatatan;
+        } 
+        else if (choice == 4) break;
+    }
+}
+
+// Fungsi Utama Edit (Memanggil Sub-Menu)
+void editWarga(pqxx::connection& conn, std::vector<Warga>& data, int idx) {
+    Warga& w = data[idx]; // Gunakan reference (&) agar perubahan langsung masuk ke vector
+    bool nikChanged = false; // Flag untuk optimasi Insertion Sort
+
+    while (true) {
+        std::cout << "\n==========================================\n";
+        std::cout << "|         EDIT DATA WARGA                |\n";
+        std::cout << "==========================================\n";
+        std::cout << "Nama     : " << w.nama_lengkap << "\n";
+        std::cout << "NIK      : " << w.nik << "\n";
+        std::cout << "Kategori : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n";
+        std::cout << "\nPilih bagian yang ingin diedit:\n";
+        std::cout << "1. Edit Data Diri & Alamat\n";
+        std::cout << "2. Edit Hasil Pemeriksaan Fisik (BB, TB, Tensi, dll)\n";
+        std::cout << "3. Edit Status Kesehatan, Rujukan & Catatan\n";
+        std::cout << "4. Selesai & Simpan Perubahan ke Database\n";
+        std::cout << "Pilihan: ";
+        
+        int choice; std::cin >> choice;
+        if (std::cin.fail()) { std::cin.clear(); std::cin.ignore(10000, '\n'); continue; }
+
+        if (choice == 1) editDataUmum(w);
+        else if (choice == 2) editDataFisik(w);
+        else if (choice == 3) editDataMedis(w);
+        else if (choice == 4) {
+            // --- OPTIMASI ALGORITMA ---
+            // Insertion sort HANYA dipanggil jika NIK berubah. 
+            // Jika hanya nama/BB/tensi yang berubah, urutan array tetap terjaga (O(1)).
+            if (nikChanged) {
+                std::cout << "NIK berubah, melakukan pengurutan ulang (Insertion Sort)...\n";
+                insertionSort(data); 
+            } else {
+                std::cout << "Data umum tidak berubah, tidak perlu pengurutan ulang (Optimasi O(1)).\n";
+            }
+
+            try {
+                saveOrUpdate(conn, w);
+                std::cout << "\n[OK] Perubahan berhasil disimpan ke Database!\n";
+            } catch (const pqxx::sql_error& e) {
+                std::cerr << "\n[!] Database Error: " << e.what() << "\n";
+            }
+            break; // Keluar dari loop edit
+        } else {
+            std::cout << "[!] Pilihan tidak valid.\n";
+        }
+    }
+}
+
+
+
+// ==========================================
 // 4. UI / MENU UTAMA
 // ==========================================
 void printWarga(const Warga& w) {
@@ -737,6 +911,109 @@ void printWarga(const Warga& w) {
                                      w.status_hamil.has_value()? w.status_hamil.value() :
                                      w.status_menyusui.has_value()? w.status_menyusui.value() :
                                      w.status_lansia.has_value()? w.status_lansia.value() : "-") << "\n\n";
+}
+
+// Helper untuk mencetak std::optional dengan aman (mengembalikan "-" jika kosong)
+std::string optStr(const std::optional<std::string>& opt) {
+    return (opt.has_value() && !opt.value().empty()) ? opt.value() : "-";
+}
+
+// Fungsi Cetak Detail Lengkap (Digunakan untuk Menu Pencarian)
+void printWargaDetail(const Warga& w) {
+    std::cout << "\n==================================================\n";
+    std::cout << "                 DETAIL DATA WARGA                \n";
+    std::cout << "==================================================\n";
+    
+    // --- Data Umum ---
+    std::cout << "\n[ DATA UMUM ]\n";
+    std::cout << "NIK           : " << w.nik << "\n";
+    std::cout << "No KK         : " << w.no_kk << "\n";
+    std::cout << "Nama Lengkap  : " << w.nama_lengkap << "\n";
+    std::cout << "TTL           : " << w.tempat_lahir << ", " << w.tgl_lahir << "\n";
+    std::cout << "Jenis Kelamin : " << w.jenis_kelamin << "\n";
+    std::cout << "No HP         : " << optStr(w.no_hp) << "\n";
+    std::cout << "Alamat        : Ds. " << optStr(w.desa) << ", RT/RW " << optStr(w.rt) << "/" << optStr(w.rw) 
+              << ", Kec. " << optStr(w.kecamatan) << ", " << optStr(w.kota) << ", " << optStr(w.provinsi) << "\n";
+    std::cout << "Disabilitas   : " << optStr(w.disabilitas) << "\n";
+    std::cout << "Kategori      : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n";
+
+    // --- Data Khusus Berdasarkan Kategori ---
+    if (w.kategori == 1) {
+        std::cout << "\n[ DATA KHUSUS BAYI ]\n";
+        std::cout << "Nama Ortu     : " << optStr(w.nama_ortu) << "\n";
+        std::cout << "Usia (bln)    : " << optStr(w.usia_bulan) << "\n";
+        std::cout << "BB / TB       : " << optStr(w.bb) << " kg / " << optStr(w.tb) << " cm\n";
+        std::cout << "LLA / LK      : " << optStr(w.lla) << " cm / " << optStr(w.lingkar_kepala) << " cm\n";
+        std::cout << "Imunisasi     : BCG(" << optStr(w.imun_bcg) << ") DPT(" << optStr(w.imun_dpt) 
+                  << ") Polio(" << optStr(w.imun_polio) << ") Campak(" << optStr(w.imun_campak) 
+                  << ") HepB(" << optStr(w.imun_hepb) << ")\n";
+        std::cout << "Gizi & Buku   : VitA(" << optStr(w.vit_a) << ") ObatCacing(" << optStr(w.obat_cacing)
+                  << ") KIA(" << optStr(w.buku_kia) << ") KMS(" << optStr(w.buku_kms) << ") PMT(" << optStr(w.pmt) << ")\n";
+        std::cout << "Lain-lain     : Yodium(" << optStr(w.kapsul_yodium) << ") Besi(" << optStr(w.sirup_besi)
+                  << ") Oralit(" << optStr(w.oralit) << ") ASI(" << optStr(w.asi_eksklusif) << ") MPASI(" << optStr(w.mp_asi) << ")\n";
+        std::cout << "Meninggal Tgl : " << optStr(w.meninggal_tgl) << "\n";
+        std::cout << "Status        : " << optStr(w.status_bayi) << "\n";
+        std::cout << "Rujukan       : " << optStr(w.rujukan_bayi) << "\n";
+        std::cout << "Catatan       : " << optStr(w.catatan) << "\n";
+    } 
+    else if (w.kategori == 2) {
+        std::cout << "\n[ DATA KHUSUS IBU HAMIL ]\n";
+        std::cout << "HPHT          : " << optStr(w.hpht) << "\n";
+        std::cout << "Kehamilan Ke  : " << optStr(w.kehamilan_ke) << "\n";
+        std::cout << "BB Sblm/Skrng : " << optStr(w.bb_sebelum) << " kg / " << optStr(w.bb_sekarang) << " kg\n";
+        std::cout << "TB / LLA      : " << optStr(w.tb_ibu) << " cm / " << optStr(w.lla_ibu) << " cm\n";
+        std::cout << "Punya KIA     : " << optStr(w.punya_kia) << "\n";
+        std::cout << "Nutrisi       : PMT(" << optStr(w.dapat_pmt) << ") PMT Minggu(" << optStr(w.pmt_minggu) 
+                  << ") TTD Minggu(" << optStr(w.ttdp_minggu) << ") Diberikan(" << optStr(w.diberikan_ttd) << ")\n";
+        std::cout << "Tanda Bahaya  : Janin(" << optStr(w.gejala_janin) << ") Muntah(" << optStr(w.muntah) 
+                  << ") Demam(" << optStr(w.demam) << ") Ketuban(" << optStr(w.ketuban) << ") Darah(" << optStr(w.pendarahan) << ")\n";
+        std::cout << "                Bengkak(" << optStr(w.bengkak) << ") Kepala(" << optStr(w.sakit_kepala) 
+                  << ") Menggigil(" << optStr(w.menggigil) << ") Batuk(" << optStr(w.batuk) << ") BAK(" << optStr(w.bak) << ")\n";
+        std::cout << "                Gatal(" << optStr(w.gatal) << ") Tidur(" << optStr(w.sulit_tidur) 
+                  << ") Cemas(" << optStr(w.cemas) << ") Jantung(" << optStr(w.jantung) << ")\n";
+        std::cout << "Konseling     : Gizi(" << optStr(w.kons_gizi) << ") BahayaHamil(" << optStr(w.kons_bahaya_ham) 
+                  << ") BahayaPers(" << optStr(w.kons_bahaya_pers) << ")\n";
+        std::cout << "Status        : " << optStr(w.status_hamil) << "\n";
+        std::cout << "Rujukan       : " << optStr(w.rujukan_hamil) << "\n";
+        std::cout << "Catatan       : " << optStr(w.catatan_hamil) << "\n";
+    } 
+    else if (w.kategori == 3) {
+        std::cout << "\n[ DATA KHUSUS IBU MENYUSUI ]\n";
+        std::cout << "Nama Suami    : " << optStr(w.nama_suami) << "\n";
+        std::cout << "Tgl Melahirkan: " << optStr(w.tgl_melahirkan) << "\n";
+        std::cout << "BB / TB       : " << optStr(w.bb_menyusui) << " kg / " << optStr(w.tb_menyusui) << " cm\n";
+        std::cout << "Punya KIA     : " << optStr(w.punya_kia_m) << "\n";
+        std::cout << "LLA           : " << optStr(w.lla_m) << " cm\n";
+        std::cout << "Nutrisi       : PMT(" << optStr(w.dapat_pmt_m) << ") PMT Minggu(" << optStr(w.pmt_minggu_m) 
+                  << ") TTD Minggu(" << optStr(w.ttdp_minggu_m) << ") Diberikan(" << optStr(w.diberikan_ttd_m) << ")\n";
+        std::cout << "Menyusui      : Sedang(" << optStr(w.sedang_menyusui) << ") Keluhan(" << optStr(w.keluhan_menyusui) << ")\n";
+        std::cout << "Keluhan Lain  : " << optStr(w.keluhan_lain) << "\n";
+        std::cout << "Konseling     : Gizi(" << optStr(w.kons_gizi_m) << ") Kebersihan(" << optStr(w.kons_kebersihan) 
+                  << ") Posisi(" << optStr(w.kons_posisi) << ") ASI(" << optStr(w.kons_asi) << ")\n";
+        std::cout << "Pemeriksaan   : Tensi(" << optStr(w.tekanan_darah_m) << ") Payudara(" << optStr(w.kondisi_payudara) << ")\n";
+        std::cout << "Status        : " << optStr(w.status_menyusui) << "\n";
+        std::cout << "Rujukan       : " << optStr(w.rujukan_menyusui) << "\n";
+        std::cout << "Catatan       : " << optStr(w.catatan_menyusui) << "\n";
+    } 
+    else if (w.kategori == 4) {
+        std::cout << "\n[ DATA KHUSUS LANSIA ]\n";
+        std::cout << "Tensi         : " << optStr(w.tekanan_darah_l) << "\n";
+        std::cout << "Gula Darah    : " << optStr(w.gula_darah) << " mg/dL\n";
+        std::cout << "Kolesterol    : " << optStr(w.kolesterol) << " mg/dL\n";
+        std::cout << "Pengobatan    : " << optStr(w.pengobatan) << "\n";
+        std::cout << "Keluhan       : " << optStr(w.keluhan_lansia) << "\n";
+        std::cout << "Kondisi Fisik : NyeriSendi(" << optStr(w.nyeri_sendi) << ") BisaJalan(" << optStr(w.bisa_jalan) 
+                  << ") Keseimbangan(" << optStr(w.keseimbangan) << ")\n";
+        std::cout << "Riwayat Makan : " << optStr(w.riwayat_makan) << "\n";
+        std::cout << "Gangguan      : Penglihatan(" << optStr(w.gangguan_penglihatan) << ") NafsuMakan(" << optStr(w.nafsu_makan) 
+                  << ") Gigi(" << optStr(w.masalah_gigi) << ")\n";
+        std::cout << "Penyakit      : Malnutrisi(" << optStr(w.malnutrisi) << ") Hipertensi(" << optStr(w.hipertensi) 
+                  << ") Riwayat(" << optStr(w.riwayat_penyakit) << ")\n";
+        std::cout << "Status        : " << optStr(w.status_lansia) << "\n";
+        std::cout << "Rujukan       : " << optStr(w.rujukan_lansia) << "\n";
+        std::cout << "Catatan       : " << optStr(w.catatan_lansia) << "\n";
+    }
+    std::cout << "==================================================\n\n";
 }
 
 int main() {
@@ -774,16 +1051,16 @@ int main() {
                 auto dur = std::chrono::duration_cast<std::chrono::microseconds>(t1-t0).count();
 
                 if (idx != -1) {
-                    printWarga(data[idx]);
+                    printWargaDetail(data[idx]);
                     std::cout << "Waktu pencarian: " << dur << " us\n";
                 } else {
                     std::cout << "NIK tidak ditemukan.\n";
                 }
             } else if (choice == 2) {
                 Warga w;
-                std::cout << "\n╔════════════════════════════════════╗\n";
-                std::cout <<   "║      INPUT DATA WARGA BARU        ║\n";
-                std::cout <<   "╚════════════════════════════════════╝\n";
+                std::cout << "\n======================================\n";
+                std::cout <<   "|      INPUT DATA WARGA BARU        |\n";
+                std::cout <<   "======================================\n";
                 std::cout << "\n--- Data Umum ---\n";
                 
                 w.nik = inputNIK("NIK (16 digit): ");
@@ -832,15 +1109,20 @@ int main() {
                     data.pop_back(); // Rollback dari memory
                 }
             } else if (choice == 3) {
-                std::string nik; std::cout << "NIK yang diedit: "; std::cin >> nik;
+                std::string nik; 
+                std::cout << "Masukkan NIK yang ingin diedit: "; 
+                std::cin >> nik;
+                
+                // Gunakan Binary Search untuk mencari index
                 int idx = binarySearch(data, nik);
+                
                 if (idx != -1) {
-                    std::cin.ignore();
-                    std::cout << "Nama Baru: "; std::getline(std::cin, data[idx].nama_lengkap);
-                    insertionSort(data);
-                    saveOrUpdate(conn, data[idx]);
-                } else std::cout << "Tidak ditemukan.\n";
-            } else if (choice == 4) {
+                    // Panggil fungsi edit dinamis yang baru saja kita buat
+                    editWarga(conn, data, idx);
+                } else {
+                    std::cout << "[!] NIK tidak ditemukan dalam data.\n";
+                }
+            }  else if (choice == 4) {
                 std::string nik; std::cout << "NIK yang dihapus: "; std::cin >> nik;
                 int idx = binarySearch(data, nik);
                 if (idx != -1) {

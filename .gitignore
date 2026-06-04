@@ -1,18 +1,25 @@
-# Build folders
+# Build folder
 build/
+out/
 cmake-build-*/
 
-# Executables
+# Compiled Object files and Executables
 *.exe
-*.out
-*.app
+*.obj
+*.o
+*.lib
+*.dll
+*.so
+*.dylib
 
-# IDE files
-.vscode/
+# CMake generated files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Visual Studio / VS Code
 .vs/
-*.sln
-*.vcxproj.user
-
-# OS files
-.DS_Store
-Thumbs.db
+.vscode/
+*.suo
+*.user
