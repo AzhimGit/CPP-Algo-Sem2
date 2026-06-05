@@ -11,15 +11,12 @@
 
 using namespace std;
 
-//validasi input
-// Helper: Trim whitespace
 string trim(const string& s) {
     auto start = s.find_first_not_of(" \t\r\n");
     auto end = s.find_last_not_of(" \t\r\n");
     return (start == string::npos) ? "" : s.substr(start, end - start + 1);
 }
 
-// konversi ke uppercase 
 string toUpper(string s) {
     transform(s.begin(), s.end(), s.begin(), ::toupper);
     return s;
@@ -59,7 +56,6 @@ bool isValidDate(const string& dateStr) {
     if (m < 1 || m > 12) return false;
     if (d < 1 || d > 31) return false;
     
-    // hari per bulan
     int daysInMonth[] = {31,28,31,30,31,30,31,31,30,31,30,31};
     if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) daysInMonth[1] = 29;
     return d <= daysInMonth[m - 1];
@@ -148,7 +144,6 @@ string inputStatus(const string& prompt) {
     }
 }
 
-// data imunisasi
 string inputImunisasi(const string& prompt, int maxDosis = 3) {
     string input;
     while (true) {
@@ -164,7 +159,6 @@ string inputImunisasi(const string& prompt, int maxDosis = 3) {
     }
 }
 
-// validasi terbatas
 string inputChoice(const string& prompt, const vector<string>& options) {
     string input;
     while (true) {
@@ -193,20 +187,17 @@ string inputRTRW(const string& prompt, const string& fieldName) {
         getline(cin, input);
         input = trim(input);
         
-        // cek panjang 1-3
         if (input.empty() || input.length() > 3) {
             cout << "Sabar, " << fieldName << " harus 1-3 digit (ditemukan " << input.length() << " karakter).\n";
             continue;
         }
         
-        // cek karakter adalah angka
         bool allDigits = all_of(input.begin(), input.end(), ::isdigit);
         if (!allDigits) {
             cout << "Sabar, " << fieldName << " hanya boleh berisi angka (0-9).\n";
             continue;
         }
         
-        // tidak boleh dengan 00 di depan
         if (input.length() > 1 && input[0] == '0' && input[1] == '0') {
             cout << "Sabar, " << fieldName << " tidak boleh dimulai dengan '00'.\n";
             continue;
@@ -216,7 +207,7 @@ string inputRTRW(const string& prompt, const string& fieldName) {
     }
 }
 
-//struktur data penduduk
+
 struct Warga {
     // Umum
     string nik, no_kk, nama_lengkap, tempat_lahir, tgl_lahir;
@@ -256,7 +247,7 @@ struct Warga {
     optional<string> rujukan_lansia, catatan_lansia;
 };
 
-//menerima semua type kolom
+
 template<typename RowType>
 optional<string> getStr(const RowType& r, const string& col) {
     auto field = r[col];
@@ -264,13 +255,7 @@ optional<string> getStr(const RowType& r, const string& col) {
                            : optional<string>(field.as<string>());
 }
 
-template<typename RowType>
-double getDoubleOpt(const RowType& r, const string& col) {
-    return r[col].is_null() ? 0.0 : r[col].as<double>();
-}
 
-
-//insertion Sort 
 void insertionSort(vector<Warga>& data) {
     for (size_t i = 1; i < data.size(); ++i) {
         Warga key = data[i];
@@ -295,7 +280,6 @@ int binarySearch(const vector<Warga>& data, const string& target) {
 }
 
 
-//akses database
 vector<Warga> fetchAll(pqxx::connection& conn) {
     vector<Warga> data;
     pqxx::work txn(conn);
@@ -303,7 +287,7 @@ vector<Warga> fetchAll(pqxx::connection& conn) {
 
     for (pqxx::result::size_type i = 0; i < res.size(); ++i) {
         const auto& row = res[i];
-        Warga w; // Default construct, lalu assign manual (menghindari error aggregate init)
+        Warga w;
         
         // data umum
         w.nik = row["nik"].as<string>();
@@ -394,7 +378,7 @@ vector<Warga> fetchAll(pqxx::connection& conn) {
     return data;
 }
 
-// input per kategori
+
 void inputBayi(Warga& w) {
     cin.ignore();
     cout << "\n=== DATA KHUSUS BAYI ===\n";
@@ -641,23 +625,19 @@ void saveOrUpdate(pqxx::connection& conn, const Warga& w) {
             to_db(w.no_hp), to_db(w.provinsi), to_db(w.kota),
             to_db(w.kecamatan), to_db(w.desa), to_db(w.rt),
             to_db(w.rw), to_db(w.disabilitas), to_string(w.kategori),
-            // Bayi
             to_db(w.nama_ortu), to_db(w.bb), to_db(w.tb),
             to_db(w.lla), to_db(w.lingkar_kepala),
             to_db(w.imun_bcg), to_db(w.imun_dpt), to_db(w.imun_polio),
             to_db(w.vit_a), to_db(w.asi_eksklusif), to_db(w.mp_asi),
             to_db(w.status_bayi), to_db(w.catatan),
-            // Ibu Hamil
             to_db(w.hpht), to_db(w.kehamilan_ke), to_db(w.bb_sebelum),
             to_db(w.bb_sekarang), to_db(w.punya_kia), to_db(w.dapat_pmt),
             to_db(w.gejala_janin), to_db(w.pendarahan), to_db(w.bengkak),
             to_db(w.kons_gizi), to_db(w.status_hamil), to_db(w.catatan_hamil),
-            // Ibu Menyusui
             to_db(w.nama_suami), to_db(w.tgl_melahirkan), to_db(w.bb_menyusui),
             to_db(w.tb_menyusui), to_db(w.sedang_menyusui), to_db(w.dapat_pmt_m),
             to_db(w.kons_asi), to_db(w.kondisi_payudara), to_db(w.tekanan_darah_m),
             to_db(w.status_menyusui), to_db(w.catatan_menyusui),
-            // Lansia
             to_db(w.tekanan_darah_l), to_db(w.gula_darah), to_db(w.kolesterol),
             to_db(w.pengobatan), to_db(w.keluhan_lansia),
             to_db(w.nyeri_sendi), to_db(w.bisa_jalan), to_db(w.gangguan_penglihatan),
@@ -669,207 +649,16 @@ void saveOrUpdate(pqxx::connection& conn, const Warga& w) {
     cout << "Mantap, Data tersimpan ke PostgreSQL.\n";
 }
 
-void deleteByNIK(pqxx::connection& conn, const string& nik) {
-    pqxx::work txn(conn);
-    // libpqxx v8: bungkus param dengan pqxx::params{...}
-    txn.exec("DELETE FROM warga_posyandu WHERE nik = $1", pqxx::params{nik});
-    txn.commit();
-    cout << "Data dihapus dari PostgreSQL.\n";
-}
 
-//edit data umum
-void editDataUmum(Warga& w) {
-    while (true) {
-        cout << "\n--- EDIT DATA UMUM ---\n";
-        cout << "1. Nama Lengkap (Saat ini: " << w.nama_lengkap << ")\n";
-        cout << "2. Tanggal Lahir (Saat ini: " << w.tgl_lahir << ")\n";
-        cout << "3. No HP (Saat ini: " << w.no_hp.value_or("-") << ")\n";
-        cout << "4. Desa/Kelurahan (Saat ini: " << w.desa.value_or("-") << ")\n";
-        cout << "5. RT (Saat ini: " << w.rt.value_or("-") << ")\n";
-        cout << "6. RW (Saat ini: " << w.rw.value_or("-") << ")\n";
-        cout << "7. Kembali\n";
-        cout << "Pilih: ";
-        
-        int choice; cin >> choice;
-        if (cin.fail()) { cin.clear(); cin.ignore(10000, '\n'); continue; }
-
-        if (choice == 1) { cin.ignore(); w.nama_lengkap = inputString("Nama Baru: "); }
-        else if (choice == 2) w.tgl_lahir = inputDate("Tgl Lahir Baru (YYYY-MM-DD): ");
-        else if (choice == 3) { cin.ignore(); w.no_hp = inputString("No HP Baru: ", true); }
-        else if (choice == 4) { cin.ignore(); w.desa = inputString("Desa Baru: "); }
-        else if (choice == 5) { cin.ignore(); w.rt = inputRTRW("RT Baru: ", "RT"); }
-        else if (choice == 6) { cin.ignore(); w.rw = inputRTRW("RW Baru: ", "RW"); }
-        else if (choice == 7) break;
-        else cout << "Sabar, Pilihan tidak valid.\n";
-    }
-}
-
-//edit data fisik dengan per kategori
-void editDataFisik(Warga& w) {
-    while (true) {
-        cout << "\n--- EDIT PEMERIKSAAN FISIK ---\n";
-        if (w.kategori == 1) { // Bayi
-            cout << "1. Berat Badan (Saat ini: " << w.bb.value_or("-") << " kg)\n";
-            cout << "2. Tinggi Badan (Saat ini: " << w.tb.value_or("-") << " cm)\n";
-            cout << "3. Lingkar Lengan Atas (Saat ini: " << w.lla.value_or("-") << " cm)\n";
-            cout << "4. Lingkar Kepala (Saat ini: " << w.lingkar_kepala.value_or("-") << " cm)\n";
-            cout << "5. Kembali\n";
-            int c; cin >> c;
-            if (c == 1) w.bb = to_string(inputDouble("BB Baru (1-30): ", 1.0, 30.0));
-            else if (c == 2) w.tb = to_string(inputDouble("TB Baru (30-100): ", 30.0, 100.0));
-            else if (c == 3) w.lla = to_string(inputDouble("LLA Baru (5-25): ", 5.0, 25.0));
-            else if (c == 4) w.lingkar_kepala = to_string(inputDouble("Lingkar Kepala Baru (25-55): ", 25.0, 55.0));
-            else if (c == 5) break;
-        } 
-        else if (w.kategori == 2) { // Ibu Hamil
-            cout << "1. BB Sekarang (Saat ini: " << w.bb_sekarang.value_or("-") << " kg)\n";
-            cout << "2. Lingkar Lengan Atas (Saat ini: " << w.lla_ibu.value_or("-") << " cm)\n";
-            cout << "3. Kembali\n";
-            int c; cin >> c;
-            if (c == 1) w.bb_sekarang = to_string(inputDouble("BB Sekarang (30-150): ", 30.0, 150.0));
-            else if (c == 2) w.lla_ibu = to_string(inputDouble("LLA Ibu (15-40): ", 15.0, 40.0));
-            else if (c == 3) break;
-        } 
-        else if (w.kategori == 3) { // Ibu Menyusui
-            cout << "1. Berat Badan (Saat ini: " << w.bb_menyusui.value_or("-") << " kg)\n";
-            cout << "2. Tekanan Darah (Saat ini: " << w.tekanan_darah_m.value_or("-") << ")\n";
-            cout << "3. Kondisi Payudara (Saat ini: " << w.kondisi_payudara.value_or("-") << ")\n";
-            cout << "4. Kembali\n";
-            int c; cin >> c;
-            if (c == 1) w.bb_menyusui = to_string(inputDouble("BB (30-150): ", 30.0, 150.0));
-            else if (c == 2) { cin.ignore(); w.tekanan_darah_m = inputString("Tekanan Darah Baru (cth: 120/80): "); }
-            else if (c == 3) { cin.ignore(); w.kondisi_payudara = inputString("Kondisi Payudara Baru: "); }
-            else if (c == 4) break;
-        } 
-        else if (w.kategori == 4) { // Lansia
-            cout << "1. Tekanan Darah (Saat ini: " << w.tekanan_darah_l.value_or("-") << ")\n";
-            cout << "2. Gula Darah (Saat ini: " << w.gula_darah.value_or("-") << " mg/dL)\n";
-            cout << "3. Kolesterol (Saat ini: " << w.kolesterol.value_or("-") << " mg/dL)\n";
-            cout << "4. Kembali\n";
-            int c; cin >> c;
-            if (c == 1) { cin.ignore(); w.tekanan_darah_l = inputString("Tekanan Darah Baru (cth: 120/80): "); }
-            else if (c == 2) w.gula_darah = to_string(inputDouble("Gula Darah Baru (50-500): ", 50.0, 500.0));
-            else if (c == 3) w.kolesterol = to_string(inputDouble("Kolesterol Baru (100-400): ", 100.0, 400.0));
-            else if (c == 4) break;
-        }
-    }
-}
-
-// edit data medisnya
-void editDataMedis(Warga& w) {
-    while (true) {
-        cout << "\n--- EDIT STATUS & CATATAN MEDIS ---\n";
-        cout << "1. Status Kesehatan (Normal/Beresiko)\n";
-        cout << "2. Keterangan Rujukan\n";
-        cout << "3. Catatan Posyandu\n";
-        cout << "4. Kembali\n";
-        cout << "Pilih: ";
-        
-        int choice; cin >> choice;
-        if (cin.fail()) { cin.clear(); cin.ignore(10000, '\n'); continue; }
-
-        if (choice == 1) {
-            cin.ignore();
-            string newStatus = inputStatus("Status Baru");
-            if (w.kategori == 1) w.status_bayi = newStatus;
-            else if (w.kategori == 2) w.status_hamil = newStatus;
-            else if (w.kategori == 3) w.status_menyusui = newStatus;
-            else if (w.kategori == 4) w.status_lansia = newStatus;
-        } 
-        else if (choice == 2) {
-            cin.ignore();
-            string newRujukan = inputString("Rujukan Baru (atau 'tidak'): ");
-            if (w.kategori == 1) w.rujukan_bayi = newRujukan;
-            else if (w.kategori == 2) w.rujukan_hamil = newRujukan;
-            else if (w.kategori == 3) w.rujukan_menyusui = newRujukan;
-            else if (w.kategori == 4) w.rujukan_lansia = newRujukan;
-        } 
-        else if (choice == 3) {
-            cin.ignore();
-            string newCatatan = inputString("Catatan Baru: ", true);
-            if (w.kategori == 1) w.catatan = newCatatan;
-            else if (w.kategori == 2) w.catatan_hamil = newCatatan;
-            else if (w.kategori == 3) w.catatan_menyusui = newCatatan;
-            else if (w.kategori == 4) w.catatan_lansia = newCatatan;
-        } 
-        else if (choice == 4) break;
-    }
-}
-
-//menu edit
-void editWarga(pqxx::connection& conn, vector<Warga>& data, int idx) {
-    Warga& w = data[idx]; // Gunakan reference (&) agar perubahan langsung masuk ke vector
-    bool nikChanged = false; // Flag untuk optimasi Insertion Sort
-
-    while (true) {
-        cout << "\n==========================================\n";
-        cout << "|         EDIT DATA WARGA                |\n";
-        cout << "==========================================\n";
-        cout << "Nama     : " << w.nama_lengkap << "\n";
-        cout << "NIK      : " << w.nik << "\n";
-        cout << "Kategori : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n";
-        cout << "\nPilih bagian yang ingin diedit:\n";
-        cout << "1. Edit Data Diri & Alamat\n";
-        cout << "2. Edit Hasil Pemeriksaan Fisik (BB, TB, Tensi, dll)\n";
-        cout << "3. Edit Status Kesehatan, Rujukan & Catatan\n";
-        cout << "4. Selesai & Simpan Perubahan ke Database\n";
-        cout << "Pilihan: ";
-        
-        int choice; cin >> choice;
-        if (cin.fail()) { cin.clear(); cin.ignore(10000, '\n'); continue; }
-
-        if (choice == 1) editDataUmum(w);
-        else if (choice == 2) editDataFisik(w);
-        else if (choice == 3) editDataMedis(w);
-        else if (choice == 4) {
-            // Insertion sort dipanggil jika NIK berubah. 
-            // Jika hanya nama/BB/tensi yang berubah, urutan array tetap terjaga.
-            if (nikChanged) {
-                cout << "NIK berubah, melakukan pengurutan ulang dengan Insertion Sort...\n";
-                insertionSort(data); 
-            } else {
-                cout << "Data umum tidak berubah, tidak perlu pengurutan ulang.\n";
-            }
-
-            try {
-                saveOrUpdate(conn, w);
-                cout << "\nMantap, Perubahan berhasil disimpan ke Database!\n";
-            } catch (const pqxx::sql_error& e) {
-                cerr << "\nSabar, Database Error: " << e.what() << "\n";
-            }
-            break;
-        } else {
-            cout << "Sabar, Pilihan tidak valid.\n";
-        }
-    }
-}
-
-//cetak data
-void printWarga(const Warga& w) {
-    cout << "\nDATA WARGA\n"
-              << "NIK        : " << w.nik << "\n"
-              << "Nama       : " << w.nama_lengkap << "\n"
-              << "Kategori   : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n"
-              << "Tgl Lahir  : " << w.tgl_lahir << " | JK: " << w.jenis_kelamin << "\n"
-              << "Alamat     : " << w.desa.value_or("-") << ", Kec. " << w.kecamatan.value_or("-") << "\n"
-              << "Status     : " << (w.status_bayi.has_value()? w.status_bayi.value() : 
-                                     w.status_hamil.has_value()? w.status_hamil.value() :
-                                     w.status_menyusui.has_value()? w.status_menyusui.value() :
-                                     w.status_lansia.has_value()? w.status_lansia.value() : "-") << "\n\n";
-}
-
-//cetak - jika data kosong
 string optStr(const optional<string>& opt) {
     return (opt.has_value() && !opt.value().empty()) ? opt.value() : "-";
 }
 
-// cetak data lengkap
 void printWargaDetail(const Warga& w) {
     cout << "\n==================================================\n";
     cout << "                 DETAIL DATA WARGA                \n";
     cout << "==================================================\n";
     
-    // umum
     cout << "\n[ DATA UMUM ]\n";
     cout << "NIK           : " << w.nik << "\n";
     cout << "No KK         : " << w.no_kk << "\n";
@@ -882,7 +671,6 @@ void printWargaDetail(const Warga& w) {
     cout << "Disabilitas   : " << optStr(w.disabilitas) << "\n";
     cout << "Kategori      : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n";
 
-    // kategori spesifik
     if (w.kategori == 1) {
         cout << "\n[ DATA KHUSUS BAYI ]\n";
         cout << "Nama Ortu     : " << optStr(w.nama_ortu) << "\n";
@@ -969,24 +757,24 @@ int main() {
         auto data = fetchAll(conn);
         cout << "Memuat " << data.size() << " data ke memori...\n";
         
-        //otomatis pas startup
         insertionSort(data);
         cout << "Data diurutkan berdasarkan NIK dengan Insertion Sort..\n";
 
         while (true) {
             cout << "\n=== POSYANDU SYSTEM ===\n"
-                      << "1. Cari Data\n"
+                      << "1. Cari Data (Binary Search)\n"
                       << "2. Tambah Data Baru\n"
-                      << "3. Edit Data\n"
-                      << "4. Hapus Data\n"
-                      << "5. Tampilkan Semua Data\n"
-                      << "6. Keluar\n"
+                      << "3. Keluar\n"
                       << "Pilih: ";
             int choice; cin >> choice;
             if (cin.fail()) { cin.clear(); cin.ignore(10000, '\n'); continue; }
 
             if (choice == 1) {
-                string nik; cout << "Masukkan NIK: "; cin >> nik;
+            
+                string nik; 
+                cout << "Masukkan NIK (16 digit): "; 
+                cin >> nik;
+                
                 auto t0 = chrono::high_resolution_clock::now();
                 int idx = binarySearch(data, nik);
                 auto t1 = chrono::high_resolution_clock::now();
@@ -994,11 +782,13 @@ int main() {
 
                 if (idx != -1) {
                     printWargaDetail(data[idx]);
-                    cout << "Waktu pencarian: " << dur << " us\n";
+                    
                 } else {
-                    cout << "NIK tidak ditemukan.\n";
+                    cout << "Sabar, NIK tidak ditemukan.\n";
                 }
-            } else if (choice == 2) {
+            } 
+            else if (choice == 2) {
+  
                 Warga w;
                 cout << "\n======================================\n";
                 cout <<   "|      INPUT DATA WARGA BARU        |\n";
@@ -1006,6 +796,8 @@ int main() {
                 cout << "\n--- Data Umum ---\n";
                 
                 w.nik = inputNIK("NIK (16 digit): ");
+                
+                
                 w.no_kk = inputNIK("No KK (16 digit): ");
                 w.nama_lengkap = inputString("Nama Lengkap: ");
                 w.tempat_lahir = inputString("Tempat Lahir: ");
@@ -1032,7 +824,6 @@ int main() {
                 cout << "1 = Bayi\n2 = Ibu Hamil\n3 = Ibu Menyusui\n4 = Lansia\n";
                 w.kategori = inputKategori("Pilih Kategori (1-4): ");
                 
-                //input per kategori
                 switch (w.kategori) {
                     case 1: inputBayi(w); break;
                     case 2: inputIbuHamil(w); break;
@@ -1040,42 +831,23 @@ int main() {
                     case 4: inputLansia(w); break;
                 }
                 
-                // save ke db
                 data.push_back(w);
                 insertionSort(data);
+                
                 try {
                     saveOrUpdate(conn, w);
-                    cout << "\nData berhasil disimpan & diurutkan dengan Insertion Sort..\n";
+                    cout << "\nMantap, Data berhasil disimpan & diurutkan dengan Insertion Sort..\n";
                 } catch (const pqxx::sql_error& e) {
                     cerr << "\nSabar, Database Error: " << e.what() << "\n";
                     data.pop_back();
                 }
-            } else if (choice == 3) {
-                string nik; 
-                cout << "Masukkan NIK yang ingin diedit: "; 
-                cin >> nik;
-                
-                // pake binary search buat cari nik
-                int idx = binarySearch(data, nik);
-                
-                if (idx != -1) {
-                    // fungsi edit
-                    editWarga(conn, data, idx);
-                } else {
-                    cout << "Sabar, NIK tidak ditemukan dalam data.\n";
-                }
-            }  else if (choice == 4) {
-                string nik; cout << "NIK yang dihapus: "; cin >> nik;
-                int idx = binarySearch(data, nik);
-                if (idx != -1) {
-                    data.erase(data.begin() + idx);
-                    deleteByNIK(conn, nik);
-                } else cout << "Tidak ditemukan.\n";
-            } else if (choice == 5) {
-                for (const auto& w : data) printWarga(w);
-            } else if (choice == 6) {
+            } 
+            else if (choice == 3) {
                 cout << "Program ditutup.\n";
                 break;
+            } 
+            else {
+                cout << "Sabar, Pilihan tidak valid.\n";
             }
         }
     } catch (const pqxx::sql_error& e) {
