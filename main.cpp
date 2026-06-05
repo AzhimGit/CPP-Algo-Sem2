@@ -329,7 +329,7 @@ vector<Warga> fetchAll(pqxx::connection& conn) {
         w.kategori = row["kategori"].as<int>();
         w.created_at = row["created_at"].is_null() ? "" : row["created_at"].as<string>();
         w.updated_at = row["updated_at"].is_null() ? "" : row["updated_at"].as<string>();
-
+        
         // kategori bayi
         w.nama_ortu = getStr(row, "nama_orangtua"); w.bb = getStr(row, "bb");
         w.tb = getStr(row, "tb"); w.lla = getStr(row, "lingkar_lengan_atas");
@@ -844,8 +844,6 @@ void editWarga(pqxx::connection& conn, vector<Warga>& data, int idx) {
     }
 }
 
-
-
 //cetak data
 void printWarga(const Warga& w) {
     cout << "\nDATA WARGA\n"
@@ -969,7 +967,7 @@ int main() {
         
         cout << "Terhubung ke PostgreSQL.\n";
         auto data = fetchAll(conn);
-        cout << "Memuat " << data.size() << " record ke memori...\n";
+        cout << "Memuat " << data.size() << " data ke memori...\n";
         
         //otomatis pas startup
         insertionSort(data);
@@ -1087,4 +1085,3 @@ int main() {
     }
     return 0;
 }
-
