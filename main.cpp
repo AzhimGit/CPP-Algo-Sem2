@@ -788,7 +788,6 @@ int main() {
                 }
             } 
             else if (choice == 2) {
-  
                 Warga w;
                 cout << "\n======================================\n";
                 cout <<   "|      INPUT DATA WARGA BARU        |\n";
