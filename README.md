@@ -6,7 +6,7 @@ Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementas
 
 | No | Fitur | Deskripsi |
 |----|-------|-----------|
-| 1 | **Cari Data** | Pencarian data berdasarkan NIK menggunakan algoritma **Binary Search** dengan pengukuran waktu eksekusi (μs) |
+| 1 | **Cari Data** | Pencarian data berdasarkan NIK menggunakan algoritma **Binary Search** |
 | 2 | **Tambah Data Baru** | Input data warga baru dengan validasi ketat (NIK 16 digit, format tanggal, rentang angka, dll) |
 | 3 | **Edit Data** | Edit data dengan 3 sub-menu: Data Diri & Alamat, Pemeriksaan Fisik, Status & Catatan Medis |
 | 4 | **Hapus Data** | Hapus data berdasarkan NIK dari memori dan database |
