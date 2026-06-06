@@ -2,6 +2,16 @@
 
 Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementasikan algoritma **Insertion Sort** dan **Binary Search** secara manual untuk tujuan akademik.
 
+### 🎯 5 Fitur Utama
+
+| No | Fitur | Deskripsi |
+|----|-------|-----------|
+| 1 | **Cari Data** | Pencarian data berdasarkan NIK menggunakan algoritma **Binary Search** dengan pengukuran waktu eksekusi (μs) |
+| 2 | **Tambah Data Baru** | Input data warga baru dengan validasi ketat (NIK 16 digit, format tanggal, rentang angka, dll) |
+| 3 | **Edit Data** | Edit data dengan 3 sub-menu: Data Diri & Alamat, Pemeriksaan Fisik, Status & Catatan Medis |
+| 4 | **Hapus Data** | Hapus data berdasarkan NIK dari memori dan database |
+| 5 | **Tampilkan Semua Data** | Menampilkan ringkasan seluruh data warga yang tersimpan |
+
 ## 🛠️ Prasyarat 
 1. **Git**: [Download di sini](https://git-scm.com/download/win)
 2. **CMake**: [Download di sini](https://cmake.org/download/) *(centang "Add CMake to the system PATH saat install")*
