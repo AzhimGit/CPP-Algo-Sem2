@@ -11,9 +11,7 @@
 
 using namespace std;
 
-// ==========================================
-// VALIDASI INPUT (STRICT)
-// ==========================================
+
 string trim(const string& s) {
     auto start = s.find_first_not_of(" \t\r\n");
     auto end = s.find_last_not_of(" \t\r\n");
@@ -25,7 +23,7 @@ string toUpper(string s) {
     return s;
 }
 
-// === VALIDASI NAMA (Hanya huruf, spasi, tanda petik, strip, titik) ===
+
 string inputNama(const string& prompt) {
     string input;
     regex namaRegex(R"([A-Za-z\s'\-\.]+)");
@@ -33,22 +31,21 @@ string inputNama(const string& prompt) {
         cout << prompt;
         getline(cin, input);
         input = trim(input);
-        if (input.empty()) {
-            cout << "Sabar, Input tidak boleh kosong.\n";
+        if (input.empty()) { //
+            cout << "Input tidak boleh kosong.\n";
             continue;
         }
-        if (input.length() < 2) {
-            cout << "Sabar, Nama minimal 2 karakter.\n";
+        if (input.length() < 2) { //
+            cout << "Nama minimal 2 karakter.\n";
             continue;
         }
         if (regex_match(input, namaRegex)) {
             return input;
         }
-        cout << "Sabar, Hanya boleh berisi huruf, spasi, tanda petik ('), strip (-), atau titik (.).\n";
+        cout << "Hanya boleh berisi huruf, spasi, tanda petik ('), strip (-), atau titik (.).\n";
     }
 }
 
-// === VALIDASI NAMA (Boleh Kosong) ===
 string inputNamaOptional(const string& prompt) {
     string input;
     regex namaRegex(R"([A-Za-z\s'\-\.]+)");
@@ -124,7 +121,7 @@ bool isValidDate(const string& dateStr) {
     return d <= daysInMonth[m - 1];
 }
 
-string inputDate(const string& prompt, bool allowEmpty = false) {
+string inputDate(const string& prompt, bool allowEmpty = false) { //
     string input;
     while (true) {
         cout << prompt;
@@ -132,11 +129,11 @@ string inputDate(const string& prompt, bool allowEmpty = false) {
         input = trim(input);
         if (input.empty() && allowEmpty) return "";
         if (isValidDate(input)) return input;
-        cout << "Sabar, Format tanggal tidak valid. Gunakan YYYY-MM-DD (contoh: 2009-08-15)\n";
+        cout << "Format tanggal tidak valid. Gunakan YYYY-MM-DD (contoh: 2009-08-15)\n";
     }
 }
 
-// === VALIDASI ANGKA ===
+
 int inputInt(const string& prompt, int min = 0, int max = 999999) {
     string input;
     while (true) {
@@ -146,9 +143,9 @@ int inputInt(const string& prompt, int min = 0, int max = 999999) {
         try {
             size_t pos;
             int val = stoi(input, &pos);
-            if (pos == input.length() && val >= min && val <= max) return val;
+            if (pos == input.length() && val >= min && val <= max) return val; //
         } catch (...) {}
-        cout << "Sabar, Masukkan bilangan bulat antara " << min << " - " << max << "\n";
+        cout << "Masukkan bilangan bulat antara " << min << " - " << max << "\n";
     }
 }
 
@@ -160,34 +157,34 @@ double inputDouble(const string& prompt, double min = 0.0, double max = 9999.9) 
         input = trim(input);
         try {
             size_t pos;
-            double val = stod(input, &pos);
-            if (pos == input.length() && val >= min && val <= max) return val;
+            double val = stod(input, &pos); //
+            if (pos == input.length() && val >= min && val <= max) return val; //
         } catch (...) {}
-        cout << "Sabar, Masukkan angka valid antara " << min << " - " << max << "\n";
+        cout << "Masukkan angka valid antara " << min << " - " << max << "\n";
     }
 }
 
-// === VALIDASI Y/N ===
+
 char inputYN(const string& prompt) {
     string input;
     while (true) {
         cout << prompt << " (Y/N): ";
         getline(cin, input);
         input = trim(toUpper(input));
-        if (input == "Y" || input == "N") return input[0];
-        cout << "Sabar, Hanya Y (Ya) atau N (Tidak) yang diperbolehkan.\n";
+        if (input == "Y" || input == "N") return input[0]; //
+        cout << "Hanya Y (Ya) atau N (Tidak) yang diperbolehkan.\n";
     }
 }
 
-// === VALIDASI JENIS KELAMIN ===
+
 char inputGender(const string& prompt) {
     string input;
     while (true) {
         cout << prompt << " (L/P): ";
         getline(cin, input);
         input = trim(toUpper(input));
-        if (input == "L" || input == "P") return input[0];
-        cout << "Sabar, Hanya L (Laki-laki) atau P (Perempuan) yang diperbolehkan.\n";
+        if (input == "L" || input == "P") return input[0]; //
+        cout << "Hanya L (Laki-laki) atau P (Perempuan) yang diperbolehkan.\n";
     }
 }
 
@@ -198,8 +195,8 @@ int inputKategori(const string& prompt) {
     }
 }
 
-// === VALIDASI STATUS ===
 string inputStatus(const string& prompt) {
+
     string input;
     while (true) {
         cout << prompt << " (normal/beresiko): ";
@@ -207,11 +204,11 @@ string inputStatus(const string& prompt) {
         input = trim(input);
         transform(input.begin(), input.end(), input.begin(), ::tolower);
         if (input == "normal" || input == "beresiko") return input;
-        cout << "Sabar, Hanya 'normal' atau 'beresiko' yang diperbolehkan.\n";
+        cout << "Hanya 'normal' atau 'beresiko' yang diperbolehkan.\n";
     }
 }
 
-// === VALIDASI IMUNISASI ===
+
 string inputImunisasi(const string& prompt, int maxDosis = 3) {
     string input;
     while (true) {
@@ -222,12 +219,12 @@ string inputImunisasi(const string& prompt, int maxDosis = 3) {
         try {
             int dosis = stoi(input);
             if (dosis >= 1 && dosis <= maxDosis) return to_string(dosis);
-        } catch (...) {}
-        cout << "Sabar, Masukkan 1-" << maxDosis << " atau - untuk tidak.\n";
+        } catch (...) {} //
+        cout << "Masukkan 1-" << maxDosis << " atau - untuk tidak.\n";
     }
 }
 
-// === VALIDASI PILIHAN ===
+
 string inputChoice(const string& prompt, const vector<string>& options) {
     string input;
     while (true) {
@@ -244,12 +241,12 @@ string inputChoice(const string& prompt, const vector<string>& options) {
             string optLower = opt;
             transform(optLower.begin(), optLower.end(), optLower.begin(), ::tolower);
             if (input == optLower) return input;
-        }
-        cout << "Sabar, Pilihan tidak valid.\n";
+        } //
+        cout << "Pilihan tidak valid.\n";
     }
 }
 
-// === VALIDASI RT/RW ===
+
 string inputRTRW(const string& prompt, const string& fieldName) {
     string input;
     while (true) {
@@ -257,19 +254,19 @@ string inputRTRW(const string& prompt, const string& fieldName) {
         getline(cin, input);
         input = trim(input);
         
-        if (input.empty() || input.length() > 3) {
-            cout << "Sabar, " << fieldName << " harus 1-3 digit (ditemukan " << input.length() << " karakter).\n";
+        if (input.empty() || input.length() > 3) { //
+            cout << fieldName << " harus 1-3 digit (ditemukan " << input.length() << " karakter).\n";
             continue;
         }
         
         bool allDigits = all_of(input.begin(), input.end(), ::isdigit);
         if (!allDigits) {
-            cout << "Sabar, " << fieldName << " hanya boleh berisi angka (0-9).\n";
+            cout << fieldName << " hanya boleh berisi angka (0-9).\n";
             continue;
         }
         
         if (input.length() > 1 && input[0] == '0' && input[1] == '0') {
-            cout << "Sabar, " << fieldName << " tidak boleh dimulai dengan '00'.\n";
+            cout << fieldName << " tidak boleh dimulai dengan '00'.\n";
             continue;
         }
         
@@ -277,9 +274,7 @@ string inputRTRW(const string& prompt, const string& fieldName) {
     }
 }
 
-// ==========================================
-// STRUKTUR DATA
-// ==========================================
+
 struct Warga {
     string nik, no_kk, nama_lengkap, tempat_lahir, tgl_lahir;
     char jenis_kelamin = ' ';
@@ -314,9 +309,7 @@ struct Warga {
     optional<string> rujukan_lansia, catatan_lansia;
 };
 
-// ==========================================
-// HELPER DATABASE
-// ==========================================
+
 template<typename RowType>
 optional<string> getStr(const RowType& r, const string& col) {
     auto field = r[col];
@@ -324,9 +317,7 @@ optional<string> getStr(const RowType& r, const string& col) {
                            : optional<string>(field.as<string>());
 }
 
-// ==========================================
-// ALGORITMA
-// ==========================================
+
 void insertionSort(vector<Warga>& data) {
     for (size_t i = 1; i < data.size(); ++i) {
         Warga key = data[i];
@@ -350,9 +341,7 @@ int binarySearch(const vector<Warga>& data, const string& target) {
     return -1;
 }
 
-// ==========================================
-// DATABASE CRUD
-// ==========================================
+
 vector<Warga> fetchAll(pqxx::connection& conn) {
     vector<Warga> data;
     pqxx::work txn(conn);
@@ -446,9 +435,7 @@ vector<Warga> fetchAll(pqxx::connection& conn) {
     return data;
 }
 
-// ==========================================
-// INPUT PER KATEGORI (DENGAN VALIDASI KETAT)
-// ==========================================
+
 void inputBayi(Warga& w) {
     cin.ignore();
     cout << "\n=== DATA KHUSUS BAYI ===\n";
@@ -646,9 +633,7 @@ void inputLansia(Warga& w) {
     w.catatan_lansia = inputString("Catatan: ", true);
 }
 
-// ==========================================
-// SAVE TO DATABASE
-// ==========================================
+
 void saveOrUpdate(pqxx::connection& conn, const Warga& w) {
     pqxx::work txn(conn);
     auto to_db = [](const optional<string>& opt) -> const char* {
@@ -719,7 +704,7 @@ void saveOrUpdate(pqxx::connection& conn, const Warga& w) {
         }
     );
     txn.commit();
-    cout << "Mantap, Data tersimpan ke PostgreSQL.\n";
+    cout << "Data tersimpan ke PostgreSQL.\n";
 }
 
 void deleteByNIK(pqxx::connection& conn, const string& nik) {
@@ -729,9 +714,6 @@ void deleteByNIK(pqxx::connection& conn, const string& nik) {
     cout << "Data dihapus dari PostgreSQL.\n";
 }
 
-// ==========================================
-// EDIT DATA LENGKAP (SEMUA FIELD)
-// ==========================================
 void editWarga(pqxx::connection& conn, vector<Warga>& data, int idx) {
     Warga& w = data[idx];
 
@@ -833,10 +815,10 @@ void editWarga(pqxx::connection& conn, vector<Warga>& data, int idx) {
         if (choice == 0) {
             try {
                 saveOrUpdate(conn, w);
-                cout << "\nMantap, Perubahan berhasil disimpan ke Database!\n";
+                cout << "\nPerubahan berhasil disimpan ke Database!\n";
             } catch (const pqxx::sql_error& e) {
-                cerr << "\nSabar, Database Error: " << e.what() << "\n";
-            }
+                cerr << "\nDatabase Error: " << e.what() << "\n";
+            } //
             break;
         }
         
@@ -966,15 +948,12 @@ void editWarga(pqxx::connection& conn, vector<Warga>& data, int idx) {
                 break;
             default:
                 cout << "Sabar, Pilihan tidak valid.\n";
-        }
+        } //
         
-        cout << "Field berhasil diperbarui.\n";
+        cout << "Field berhasil diperbarui.\n"; //
     }
 }
 
-// ==========================================
-// CETAK DATA
-// ==========================================
 string optStr(const optional<string>& opt) {
     return (opt.has_value() && !opt.value().empty()) ? opt.value() : "-";
 }
@@ -1053,9 +1032,7 @@ void printWargaDetail(const Warga& w) {
     cout << "==================================================\n\n";
 }
 
-// ==========================================
-// MAIN PROGRAM
-// ==========================================
+
 int main() {
     try {
         pqxx::connection conn("host=localhost dbname=posyandu user=postgres password=root");
@@ -1064,7 +1041,7 @@ int main() {
         auto data = fetchAll(conn);
         cout << "Memuat " << data.size() << " data ke memori...\n";
         
-        insertionSort(data);
+        insertionSort(data); //
         cout << "Data diurutkan berdasarkan NIK dengan Insertion Sort..\n";
 
         while (true) {
@@ -1090,7 +1067,7 @@ int main() {
                     printWargaDetail(data[idx]);
                     cout << "Data ditemukan!\n";
                 } else {
-                    cout << "NIK tidak ditemukan.\n";
+                    cout << "NIK tidak ditemukan.\n"; //
                 }
             } else if (choice == 2) {
                 Warga w;
@@ -1137,10 +1114,10 @@ int main() {
                 insertionSort(data);
                 try {
                     saveOrUpdate(conn, w);
-                    cout << "\nData berhasil disimpan & diurutkan dengan Insertion Sort..\n";
+                    cout << "\nData berhasil disimpan & diurutkan dengan Insertion Sort..\n"; //
                 } catch (const pqxx::sql_error& e) {
-                    cerr << "\nSabar, Database Error: " << e.what() << "\n";
-                    data.pop_back();
+                    cerr << "\nDatabase Error: " << e.what() << "\n"; //
+                    data.pop_back(); //
                 }
             } else if (choice == 3) {
                 string nik; 
@@ -1152,7 +1129,7 @@ int main() {
                 if (idx != -1) {
                     editWarga(conn, data, idx);
                 } else {
-                    cout << "Sabar, NIK tidak ditemukan dalam data.\n";
+                    cout << "NIK tidak ditemukan dalam data.\n"; //
                 }
             } else if (choice == 4) {
                 string nik; cout << "NIK yang dihapus: "; cin >> nik;
@@ -1160,7 +1137,7 @@ int main() {
                 if (idx != -1) {
                     data.erase(data.begin() + idx);
                     deleteByNIK(conn, nik);
-                } else cout << "Tidak ditemukan.\n";
+                } else cout << "Tidak ditemukan.\n"; //
             } else if (choice == 5) {
                 for (const auto& w : data) printWarga(w);
             } else if (choice == 6) {
@@ -1168,10 +1145,10 @@ int main() {
                 break;
             }
         }
-    } catch (const pqxx::sql_error& e) {
-        cerr << "SQL Error: " << e.what() << "\nQuery: " << e.query() << "\n";
-    } catch (const exception& e) {
-        cerr << "Error: " << e.what() << "\n";
-    }
-    return 0;
-}
+    } catch (const pqxx::sql_error& e) { //
+        cerr << "SQL Error: " << e.what() << "\nQuery: " << e.query() << "\n"; //
+    } catch (const exception& e) { //
+        cerr << "Error: " << e.what() << "\n"; //
+    } //
+    return 0; //
+} //
