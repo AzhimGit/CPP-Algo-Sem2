@@ -959,16 +959,24 @@ string optStr(const optional<string>& opt) {
 }
 
 void printWarga(const Warga& w) {
-    cout << "\nDATA WARGA\n"
-              << "NIK        : " << w.nik << "\n"
-              << "Nama       : " << w.nama_lengkap << "\n"
-              << "Kategori   : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n"
-              << "Tgl Lahir  : " << w.tgl_lahir << " | JK: " << w.jenis_kelamin << "\n"
-              << "Alamat     : " << w.desa.value_or("-") << ", Kec. " << w.kecamatan.value_or("-") << "\n"
-              << "Status     : " << (w.status_bayi.has_value()? w.status_bayi.value() : 
-                                     w.status_hamil.has_value()? w.status_hamil.value() :
-                                     w.status_menyusui.has_value()? w.status_menyusui.value() :
-                                     w.status_lansia.has_value()? w.status_lansia.value() : "-") << "\n\n";
+    string status = "-", catatan = "-";
+    
+    switch (w.kategori) {
+        case 1: status = w.status_bayi.value_or("-"); catatan = w.catatan.value_or("-"); break;
+        case 2: status = w.status_hamil.value_or("-"); catatan = w.catatan_hamil.value_or("-"); break;
+        case 3: status = w.status_menyusui.value_or("-"); catatan = w.catatan_menyusui.value_or("-"); break;
+        case 4: status = w.status_lansia.value_or("-"); catatan = w.catatan_lansia.value_or("-"); break;
+    }
+    
+    cout << "\n====================================\n"
+              << "| NIK        : " << w.nik << "\n"
+              << "| Nama       : " << w.nama_lengkap << "\n"
+              << "| Kategori   : " << (w.kategori==1?"Bayi":w.kategori==2?"Ibu Hamil":w.kategori==3?"Ibu Menyusui":"Lansia") << "\n"
+              << "| Tgl Lahir  : " << w.tgl_lahir << " | JK: " << w.jenis_kelamin << "\n"
+              << "| Alamat     : " << w.desa.value_or("-") << ", Kec. " << w.kecamatan.value_or("-") << "\n"
+              << "| Status     : " << status << "\n"
+              << "| Catatan    : " << catatan << "\n"
+              << "====================================\n";
 }
 
 void printWargaDetail(const Warga& w) {
