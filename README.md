@@ -1,6 +1,6 @@
 # 🏥 Sistem Pencatatan Posyandu (C++ & PostgreSQL)
 
-Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementasikan algoritma **Insertion Sort** dan **Binary Search** secara manual untuk tujuan akademik.
+Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementasikan algoritma **Insertion Sort** dan **Binary Search** secara manual + **Expand** untuk mencari kata kunci duplikat.
 
 ### 🎯 5 Fitur Utama
 
@@ -11,6 +11,8 @@ Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementas
 | 3 | **Edit Data** | Edit data dengan 3 sub-menu: Data Diri & Alamat, Pemeriksaan Fisik, Status & Catatan Medis |
 | 4 | **Hapus Data** | Hapus data berdasarkan NIK dari memori dan database |
 | 5 | **Tampilkan Semua Data** | Menampilkan ringkasan seluruh data warga yang tersimpan |
+| 6 | **Cari Nama Warga** | Pencarian data berdasarkan nama lengkap (multiple match) | Insertion Sort + Binary Search + Expand |
+| 7 | **Cari Tempat Lahir** | Pencarian data berdasarkan tempat lahir (multiple match) | Insertion Sort + Binary Search + Expand |
 
 ## 🛠️ Prasyarat 
 1. **Git**: [Download di sini](https://git-scm.com/download/win)
