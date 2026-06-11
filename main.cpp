@@ -8,6 +8,7 @@
 #include <regex>
 #include <cctype>
 #include <functional>
+#include <set>
 
 using namespace std;
 
@@ -338,6 +339,125 @@ int binarySearch(const vector<Warga>& data, const string& target) {
     return -1;
 }
 
+void insertionSortName(vector<Warga>& data, int& comparisons) {
+    comparisons = 0;
+    for (size_t i = 1; i < data.size(); ++i) {
+        Warga key = data[i];
+        int j = static_cast<int>(i) - 1;
+        while (j >= 0) {
+            comparisons++;
+            if (data[j].nama_lengkap > key.nama_lengkap) {
+                data[j + 1] = data[j];
+                --j;
+            } else {
+                break;
+            }
+        }
+        data[j + 1] = key;
+    }
+}
+
+void insertionSortTempatLahir(vector<Warga>& data, int& comparisons) {
+    comparisons = 0;
+    for (size_t i = 1; i < data.size(); ++i) {
+        Warga key = data[i];
+        int j = static_cast<int>(i) - 1;
+        while (j >= 0) {
+            comparisons++;
+            if (data[j].tempat_lahir > key.tempat_lahir) {
+                data[j + 1] = data[j];
+                --j;
+            } else {
+                break;
+            }
+        }
+        data[j + 1] = key;
+    }
+}
+
+vector<int> binarySearchAllName(const vector<Warga>& data, const string& target, int& comparisons) {
+    comparisons = 0;
+    vector<int> results;
+    if (data.empty()) return results;
+    
+    int l = 0, r = static_cast<int>(data.size()) - 1;
+    int foundIdx = -1;
+    
+    while (l <= r) {
+        comparisons++;
+        int mid = l + (r - l) / 2;
+        if (data[mid].nama_lengkap == target) {
+            foundIdx = mid;
+            break;
+        }
+        if (data[mid].nama_lengkap < target) l = mid + 1;
+        else r = mid - 1;
+    }
+    
+    if (foundIdx == -1) return results;
+    
+    int left = foundIdx;
+    while (left > 0) {
+        comparisons++;
+        if (data[left - 1].nama_lengkap == target) left--;
+        else break;
+    }
+
+    int right = foundIdx;
+    while (right < (int)data.size() - 1) {
+        comparisons++;
+        if (data[right + 1].nama_lengkap == target) right++;
+        else break;
+    }
+    
+    for (int i = left; i <= right; ++i) {
+        results.push_back(i);
+    }
+    
+    return results;
+}
+
+vector<int> binarySearchAllTempatLahir(const vector<Warga>& data, const string& target, int& comparisons) {
+    comparisons = 0;
+    vector<int> results;
+    if (data.empty()) return results;
+    
+    int l = 0, r = static_cast<int>(data.size()) - 1;
+    int foundIdx = -1;
+    
+    while (l <= r) {
+        comparisons++;
+        int mid = l + (r - l) / 2;
+        if (data[mid].tempat_lahir == target) {
+            foundIdx = mid;
+            break;
+        }
+        if (data[mid].tempat_lahir < target) l = mid + 1;
+        else r = mid - 1;
+    }
+    
+    if (foundIdx == -1) return results;
+    
+    int left = foundIdx;
+    while (left > 0) {
+        comparisons++;
+        if (data[left - 1].tempat_lahir == target) left--;
+        else break;
+    }
+    
+    int right = foundIdx;
+    while (right < (int)data.size() - 1) {
+        comparisons++;
+        if (data[right + 1].tempat_lahir == target) right++;
+        else break;
+    }
+    
+    for (int i = left; i <= right; ++i) {
+        results.push_back(i);
+    }
+    
+    return results;
+}
 
 vector<Warga> fetchAll(pqxx::connection& conn) {
     vector<Warga> data;
@@ -1055,7 +1175,7 @@ int main() {
                       << "4. Hapus Data\n"
                       << "5. Tampilkan Semua Data\n"
                       << "6. Cari Nama Warga\n"
-                      << "7. Alamat Warga\n"
+                      << "7. Tempat Lahir Warga\n"
                       << "8. Keluar\n"
                       << "Pilih: ";
             int choice; cin >> choice;
@@ -1144,34 +1264,87 @@ int main() {
                     deleteByNIK(conn, nik);
                 } else cout << "Tidak ditemukan.\n"; 
             } else if (choice == 5) {
-                for (const auto& w : data) printWarga(w);
-            }else if (choice == 6) {
-                cout << "Cari Nama Warga\n";
-                string nama_lengkap; cout << "Masukkan Nama: "; cin.ignore(); getline(cin, nama_lengkap);
-                bool found = false;
-                for (const auto& w : data) {
-                    if (w.nama_lengkap.find(nama_lengkap) != string::npos) {
-                        printWarga(w);
-                        found = true;
+                for (const auto& w : data)printWarga(w);
+            } else if (choice == 6) {
+                cout << "\nCari Nama Warga\n";
+                
+                cin.ignore();
+                string nama;
+                cout << "Masukkan Nama Lengkap: ";
+                getline(cin, nama);
+                nama = trim(nama);
+                
+                if (nama.empty()) {
+                    cout << "Nama tidak boleh kosong!\n";
+                    continue;
+                }
+                
+                vector<Warga> dataCopy = data;
+                
+                int sortComparisons = 0;
+                auto t0 = chrono::high_resolution_clock::now();
+                insertionSortName(dataCopy, sortComparisons);
+                auto t1 = chrono::high_resolution_clock::now();
+                auto durSort = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+                
+                int searchComparisons = 0;
+                t0 = chrono::high_resolution_clock::now();
+                vector<int> results = binarySearchAllName(dataCopy, nama, searchComparisons);
+                t1 = chrono::high_resolution_clock::now();
+                auto durSearch = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+                
+                cout << "\n HASIL\n";
+                cout << "Kata kunci    : \"" << nama << "\"\n";
+                
+                if (results.empty()) {
+                    cout << " Tidak ada data dengan nama \"" << nama << "\"\n";
+                } else {
+                    cout << " NAMA DITEMUKAN\n";
+                    for (int idx : results) {
+                        printWarga(dataCopy[idx]);
                     }
                 }
-                if (!found) {
-                    cout << "Nama tidak ditemukan.\n";
+            }
+            else if (choice == 7) {
+                cout << "\nCari Tempat Lahir warga\n";
+                
+                cin.ignore();
+                string tempat;
+                cout << "Masukkan Tempat Lahir: ";
+                getline(cin, tempat);
+                tempat = trim(tempat);
+                
+                if (tempat.empty()) {
+                    cout << "Tempat lahir tidak boleh kosong\n";
+                    continue;
                 }
-            }else if (choice == 7) {
-                cout << "Cari Alamat Warga\n";
-                string tempat_lahir; cout << "Masukkan Alamat: "; cin.ignore(); getline(cin, tempat_lahir);
-                bool found = false;
-                for (const auto& w : data) {
-                    if (w.alamat.find(tempat_lahir) != string::npos) {
-                        printWarga(w);
-                        found = true;
+                
+                vector<Warga> dataCopy = data;
+                
+                int sortComparisons = 0;
+                auto t0 = chrono::high_resolution_clock::now();
+                insertionSortTempatLahir(dataCopy, sortComparisons);
+                auto t1 = chrono::high_resolution_clock::now();
+                auto durSort = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+                
+                int searchComparisons = 0;
+                t0 = chrono::high_resolution_clock::now();
+                vector<int> results = binarySearchAllTempatLahir(dataCopy, tempat, searchComparisons);
+                t1 = chrono::high_resolution_clock::now();
+                auto durSearch = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
+                
+                cout << "\n HASIL PENCARIAN \n";
+                cout << "Kata kunci    : \"" << tempat << "\"\n";
+                
+                if (results.empty()) {
+                    cout << " Tidak ada data dengan tempat lahir \"" << tempat << "\"\n";
+                } else {
+                    cout << " DATA DITEMUKAN \n";
+                    for (int idx : results) {
+                        printWarga(dataCopy[idx]);
                     }
                 }
-                if (!found) {
-                    cout << "Alamat tidak ditemukan.\n";
-                }
-            }else if (choice == 8) {
+            } else if (choice == 8) {
                 cout << "Program ditutup.\n";
                 break;
             }
