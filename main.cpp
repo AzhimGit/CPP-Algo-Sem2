@@ -1282,16 +1282,10 @@ int main() {
                 vector<Warga> dataCopy = data;
                 
                 int sortComparisons = 0;
-                auto t0 = chrono::high_resolution_clock::now();
                 insertionSortName(dataCopy, sortComparisons);
-                auto t1 = chrono::high_resolution_clock::now();
-                auto durSort = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
                 
                 int searchComparisons = 0;
-                t0 = chrono::high_resolution_clock::now();
                 vector<int> results = binarySearchAllName(dataCopy, nama, searchComparisons);
-                t1 = chrono::high_resolution_clock::now();
-                auto durSearch = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
                 
                 cout << "\n HASIL\n";
                 cout << "Kata kunci    : \"" << nama << "\"\n";
@@ -1322,16 +1316,10 @@ int main() {
                 vector<Warga> dataCopy = data;
                 
                 int sortComparisons = 0;
-                auto t0 = chrono::high_resolution_clock::now();
                 insertionSortTempatLahir(dataCopy, sortComparisons);
-                auto t1 = chrono::high_resolution_clock::now();
-                auto durSort = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
                 
                 int searchComparisons = 0;
-                t0 = chrono::high_resolution_clock::now();
                 vector<int> results = binarySearchAllTempatLahir(dataCopy, tempat, searchComparisons);
-                t1 = chrono::high_resolution_clock::now();
-                auto durSearch = chrono::duration_cast<chrono::microseconds>(t1 - t0).count();
                 
                 cout << "\n HASIL PENCARIAN \n";
                 cout << "Kata kunci    : \"" << tempat << "\"\n";
