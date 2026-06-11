@@ -1160,10 +1160,10 @@ int main() {
                 }
             }else if (choice == 7) {
                 cout << "Cari Alamat Warga\n";
-                string alamat; cout << "Masukkan Alamat: "; cin.ignore(); getline(cin, alamat);
+                string tempat_lahir; cout << "Masukkan Alamat: "; cin.ignore(); getline(cin, tempat_lahir);
                 bool found = false;
                 for (const auto& w : data) {
-                    if (w.alamat.find(alamat) != string::npos) {
+                    if (w.alamat.find(tempat_lahir) != string::npos) {
                         printWarga(w);
                         found = true;
                     }
