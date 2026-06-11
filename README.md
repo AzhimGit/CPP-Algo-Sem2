@@ -2,7 +2,7 @@
 
 Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementasikan algoritma **Insertion Sort** dan **Binary Search** secara manual + **Expand** untuk mencari kata kunci duplikat.
 
-### 🎯 5 Fitur Utama
+### 🎯 7 Fitur Utama
 
 | No | Fitur | Deskripsi |
 |----|-------|-----------|
