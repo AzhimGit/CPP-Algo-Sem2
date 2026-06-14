@@ -18,8 +18,8 @@ Project ini adalah sistem manajemen data kesehatan Posyandu yang mengimplementas
 1. **Git**: [Download di sini](https://git-scm.com/download/win)
 2. **CMake**: [Download di sini](https://cmake.org/download/) *(centang "Add CMake to the system PATH saat install")*
 3. **Visual Studio Build Tools 2022**: [Download di sini](https://visualstudio.microsoft.com/visual-cpp-build-tools/) *(Pilih workload: "Desktop development with C++")*
-4. **PostgreSQL**: [Download di sini](https://www.postgresql.org/download/windows/) 
-
+4. **PostgreSQL**: [Download di sini](https://www.postgresql.org/download/windows/)
+5. **Setup PostgreSQL**: [Copy di sini](https://justpaste.it/4m5pf/pdf)
 
 ## 🚀 Cara Setup & Menjalankan
 
